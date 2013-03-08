@@ -32,10 +32,12 @@ before your require_tree statement.
 
 Edit your application.js and add
 
-//= require bootstrap
+//= require bootstrap.min
 //= require knockout
 //= require knockout.mapping
 //= require data.access
+//= require jquery.hammer
+//= require jquery.transit
 
 before your require_tree.  
 
