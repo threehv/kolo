@@ -26,12 +26,19 @@ class AdminViewModel extends ViewModel
 # doUpdate - update the given item in the database; on success, call @load()
 # doDelete - delete the given item from the database; on success call @items.remove(item) and then @load()
 # It expects models to have an updateAttributes(data) method and a valid method
+# After instantiation you can also set the following hooks: 
+#   db.sortFunction = function(a, b) { ... }
+#   db.onBeforeLoad = function() { ... }
+#   db.onAfterLoad = function() { ... }
 
 class Db
   constructor: (@name, @url)->
     @items = ko.observableArray []
     @selected = ko.observable null
     @plural = "#{@name}s"
+    @sortFunction = null
+    @onBeforeLoad = null
+    @onAfterLoad = null
 
   find: (id)=>
     for item in @items()
@@ -48,10 +55,14 @@ class Db
   load: (autoReload = false)=>
     if !@selected()
       viewModel.systemNotification @plural, 'loading'
+      @onBeforeLoad() if @onBeforeLoad?
       $.get @url, (data)=>
         for itemData in @itemDataFrom(data)
           item = @findOrCreate itemData.id
           item.updateAttributes itemData
+        if @sortFunction?
+          @items.sort @sortFunction
+        @onAfterLoad() if @onAfterLoad?
         viewModel.systemNotification @plural, 'loaded'
     if autoReload
       setTimeout =>
