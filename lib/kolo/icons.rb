@@ -68,5 +68,21 @@ module Kolo
      show_icon_called 'icon-list-alt', extra_classes
     end
 
+    def left_icon extra_classes = ''
+      show_icon_called 'icon-chevron-left', extra_classes
+    end
+
+    def right_icon extra_classes = ''
+      show_icon_called 'icon-chevron-right', extra_classes
+    end
+
+    def up_icon extra_classes = ''
+      show_icon_called 'icon-chevron-up', extra_classes
+    end
+
+    def down_icon extra_classes = ''
+      show_icon_called 'icon-chevron-down', extra_classes
+    end
+
   end
 end
