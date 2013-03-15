@@ -65,6 +65,7 @@ class Db
   load: (autoReload = false)=>
     if !@selected()
       viewModel.systemNotification @plural, 'loading'
+      viewModel.loading true
       @onBeforeLoad() if @onBeforeLoad?
       $.get @url, (data)=>
         for itemData in @itemDataFrom(data)
@@ -73,6 +74,7 @@ class Db
         if @sortFunction?
           @items.sort @sortFunction
         @onAfterLoad() if @onAfterLoad?
+        viewModel.loading false
         viewModel.systemNotification @plural, 'loaded'
     if autoReload
       setTimeout =>
@@ -94,6 +96,7 @@ class Db
 
   doCreate: (item)=>
     viewModel.systemNotification @name, 'saving'
+    viewModel.loading true
     $.ajax
       url: @url
       dataType: 'json'
@@ -102,11 +105,13 @@ class Db
       success: (data)=>
         @selected null
         viewModel.systemNotification @name, 'saved'
+        viewModel.loading false
         @load()
     return false
 
   doUpdate: (item)=>
     viewModel.systemNotification @name, 'saving'
+    viewModel.loading true
     $.ajax
       url: @urlFor(item)
       dataType: 'json'
@@ -115,11 +120,13 @@ class Db
       success: (data)=>
         @selected null
         viewModel.systemNotification @name, 'saved'
+        viewModel.loading false
         @load()
     return false
 
   doDestroy: (item)=>
     viewModel.systemNotification @name, 'deleting'
+    viewModel.loading true
     $.ajax
       url: @urlFor(item)
       dataType: 'json'
@@ -128,6 +135,7 @@ class Db
         viewModel.systemNotification @name, 'deleted'
         @selected null
         @items.remove(item)
+        viewModel.loading false
         @load()
     return false
 
