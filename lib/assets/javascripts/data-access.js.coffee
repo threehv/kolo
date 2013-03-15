@@ -18,6 +18,8 @@ class ClientViewModel extends ViewModel
 class AdminViewModel extends ViewModel
 
 # Construct passing in a name (which is used in notifications) and a URL (eg /api/v1/people.json) that is used to load items (GET) and create them (POST)
+#   Plus an optional pushStateURI; if supplied (for example as /path/to/object) then the pushState is updated to selected().name() with the URI set to /path/to/object/#{selected().id}
+#
 # Subclasses are expected to implement
 # newItem(id) - return an instance of a new model with the given ID (data will be filled in later by the Db)
 # itemDataFrom(data) - return an array of JSON instances; for example if your people.json call returns data.people [ person1, person2 ] you would return data.people
@@ -25,6 +27,8 @@ class AdminViewModel extends ViewModel
 # urlFor(item) - the URL for updates (PUT) or deletes (DELETE)
 # doUpdate - update the given item in the database; on success, call @load()
 # doDelete - delete the given item from the database; on success call @items.remove(item) and then @load()
+# name - used for setting push-state
+#
 # It expects models to have an updateAttributes(data) method and a valid method
 # After instantiation you can also set the following hooks: 
 #   db.sortFunction = function(a, b) { ... }
@@ -32,13 +36,19 @@ class AdminViewModel extends ViewModel
 #   db.onAfterLoad = function() { ... }
 
 class Db
-  constructor: (@name, @url)->
+  constructor: (@name, @url, @pushStateUri)->
     @items = ko.observableArray []
     @selected = ko.observable null
     @plural = "#{@name}s"
     @sortFunction = null
     @onBeforeLoad = null
     @onAfterLoad = null
+    if @pushStateUri? && history.pushState?
+      @selected.subscribe (newValue)=>
+        if newValue?
+          history.pushState @selected().name(), @selected().name(), "#{@pushStateUri}/#{@selected().id}"
+        else
+          history.pushState '', '', @pushStateUri
 
   find: (id)=>
     for item in @items()
@@ -67,7 +77,7 @@ class Db
     if autoReload
       setTimeout =>
         @load(true)
-      , 10000
+      , 30000
     return false
 
   add: =>
