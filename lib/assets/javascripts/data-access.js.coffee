@@ -82,6 +82,7 @@ class Db
     itemToAdd = @newItem(null)
     @selected(itemToAdd)
     viewModel.systemNotification @name, 'new'
+    return itemToAdd
 
   save: (item)=>
     return unless item.valid()
