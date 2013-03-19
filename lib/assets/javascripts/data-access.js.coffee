@@ -68,11 +68,7 @@ class Db
       viewModel.loading true
       @onBeforeLoad() if @onBeforeLoad?
       $.get @url, (data)=>
-        for itemData in @itemDataFrom(data)
-          item = @findOrCreate itemData.id
-          item.updateAttributes itemData
-        if @sortFunction?
-          @items.sort @sortFunction
+        @doLoad(data)
         @onAfterLoad() if @onAfterLoad?
         viewModel.loading false
         viewModel.systemNotification @plural, 'loaded'
@@ -93,6 +89,13 @@ class Db
       @doUpdate item
     else
       @doCreate item
+
+  doLoad: (data)=>
+    for itemData in @itemDataFrom(data)
+      item = @findOrCreate itemData.id
+      item.updateAttributes itemData
+    if @sortFunction?
+      @items.sort @sortFunction
 
   doCreate: (item)=>
     viewModel.systemNotification @name, 'saving'
