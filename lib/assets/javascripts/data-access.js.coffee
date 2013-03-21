@@ -45,7 +45,7 @@ class Db
     @onAfterLoad = null
     if @pushStateUri? && history.pushState?
       @selected.subscribe (newValue)=>
-        if newValue?
+        if newValue? and newValue.id?
           history.pushState @selected().name(), @selected().name(), "#{@pushStateUri}/#{@selected().id}"
         else
           history.pushState '', '', @pushStateUri
