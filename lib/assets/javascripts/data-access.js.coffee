@@ -36,13 +36,18 @@ class AdminViewModel extends ViewModel
 #   db.onAfterLoad = function() { ... }
 
 class Db
-  constructor: (@name, @url, @pushStateUri)->
+  constructor: (@name, url, @pushStateUri)->
+    @url = ko.observable url
     @items = ko.observableArray []
     @selected = ko.observable null
     @plural = "#{@name}s"
     @sortFunction = null
     @onBeforeLoad = null
     @onAfterLoad = null
+    @autoLoading = false
+    @url.subscribe (newValue)=>
+      if newValue?
+        @load(false)
     if @pushStateUri? && history.pushState?
       @selected.subscribe (newValue)=>
         if newValue? and newValue.id?
@@ -67,16 +72,31 @@ class Db
       viewModel.systemNotification @plural, 'loading'
       viewModel.loading true
       @onBeforeLoad() if @onBeforeLoad?
-      $.get @url, (data)=>
+      $.get @url(), (data)=>
         @doLoad(data)
         @onAfterLoad() if @onAfterLoad?
         viewModel.loading false
         viewModel.systemNotification @plural, 'loaded'
     if autoReload
+      @autoLoading = true
       setTimeout =>
         @load(true)
       , 30000
     return false
+
+  postTo: (url, data)->
+    viewModel.systemNotification @name, 'saving'
+    viewModel.loading true
+    $.ajax
+      url: url
+      dataType: 'json'
+      type: 'POST'
+      data: data
+      success: (data)=>
+        viewModel.systemNotification @name, 'saved'
+        viewModel.loading false
+        @load(false)
+    return true
 
   add: =>
     itemToAdd = @newItem(null)
@@ -102,7 +122,7 @@ class Db
     viewModel.systemNotification @name, 'saving'
     viewModel.loading true
     $.ajax
-      url: @url
+      url: @url()
       dataType: 'json'
       type: 'POST'
       data: @toJS(item) 
