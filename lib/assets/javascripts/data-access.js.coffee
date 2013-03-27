@@ -44,6 +44,7 @@ class Db
     @sortFunction = null
     @onBeforeLoad = null
     @onAfterLoad = null
+    @onAfterPost = null
     @autoLoading = false
     @url.subscribe (newValue)=>
       if newValue?
@@ -68,6 +69,7 @@ class Db
     return item
 
   load: (autoReload = false)=>
+    return if !@url()? || @url() == '' 
     if !@selected()
       viewModel.systemNotification @plural, 'loading'
       viewModel.loading true
@@ -95,6 +97,7 @@ class Db
       success: (data)=>
         viewModel.systemNotification @name, 'saved'
         viewModel.loading false
+        @onAfterPost(data) if @onAfterPost?
         @load(false)
     return true
 
