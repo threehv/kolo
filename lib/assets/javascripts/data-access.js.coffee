@@ -28,11 +28,13 @@ class AdminViewModel extends ViewModel
 # doUpdate - update the given item in the database; on success, call @load()
 # doDelete - delete the given item from the database; on success call @items.remove(item) and then @load()
 # name - used for setting push-state
+# canLoad - you can override this to prevent the load() method from making any calls.  You should also call super when overriding as this checks for null and blank urls
 #
 # It expects models to have an updateAttributes(data) method and a valid method
+#
 # After instantiation you can also set the following hooks: 
 #   db.sortFunction = function(a, b) { ... }
-#   db.onBeforeLoad = function() { ... }
+#   db.onBeforeLoad = function() { ... } 
 #   db.onAfterLoad = function() { ... }
 
 class Db
@@ -68,8 +70,12 @@ class Db
       @items.push item
     return item
 
+  canLoad: =>
+    return false if !@url()? || @url() == '' 
+    return true
+
   load: (autoReload = false)=>
-    return if !@url()? || @url() == '' 
+    return unless @canLoad()
     if !@selected()
       viewModel.systemNotification @plural, 'loading'
       viewModel.loading true
