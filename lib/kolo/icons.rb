@@ -18,6 +18,7 @@ module Kolo
 
     def go_icon extra_classes = ''
       show_icon_called 'icon-play', extra_classes
+      show_icon_called 'icon-play', extra_classes
     end
 
     def select_all_icon extra_classes = ''

@@ -92,7 +92,7 @@ class Db
       , 30000
     return false
 
-  postTo: (url, data)->
+  postTo: (url, data, callback)->
     viewModel.systemNotification @name, 'saving'
     viewModel.loading true
     $.ajax
@@ -103,6 +103,7 @@ class Db
       success: (data)=>
         viewModel.systemNotification @name, 'saved'
         viewModel.loading false
+        callback(data) if callback?
         @onAfterPost(data) if @onAfterPost?
         @load(false)
     return true
