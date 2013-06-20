@@ -55,6 +55,7 @@ class Db
     @onBeforeLoad = null
     @onAfterLoad = null
     @onAfterPost = null
+    @onAfterDelete = null
     @autoLoading = false
     @url.subscribe (newValue)=>
       if newValue?
@@ -179,6 +180,7 @@ class Db
         @selected null
         @items.remove(item)
         viewModel.loading false
+        @onAfterDelete if @onAfterDelete?
         @load()
     return false
 
