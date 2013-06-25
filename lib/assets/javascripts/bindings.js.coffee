@@ -149,3 +149,26 @@ ko.bindingHandlers.swipedown =
     Hammer(element).on 'swipedown', (event)-> 
       value = valueAccessor()
       value(event)
+
+ko.bindingHandlers.fileupload = 
+  init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext)->
+    options = ko.utils.unwrapObservable valueAccessor()
+    property = ko.utils.unwrapObservable options.property
+    parameter = ko.utils.unwrapObservable options.parameter
+    onComplete = ko.utils.unwrapObservable options.onComplete
+    url = ko.utils.unwrapObservable options.url
+
+    return false unless (property && url && parameter)
+    element.addEventListener 'drop', (event)=>
+      event.stopPropagation()
+      event.preventDefault()
+      files = event.dataTransfer.files
+      return unless files.length > 0
+      formData = new FormData
+      formData.append parameter, files[0]
+      xhr = new XMLHttpRequest
+      xhr.addEventListener 'load', (event)->
+        viewModel[onComplete]() if viewModel[onComplete]?
+      xhr.open 'POST', url
+      xhr.send formData
+    return true

@@ -83,7 +83,7 @@ class Db
     return false if !@url()? || @url() == '' 
     return true
 
-  load: (autoReload = false)=>
+  load: (autoReload = false, afterLoad = null)=>
     return unless @canLoad()
     if !@selected()
       viewModel.systemNotification @plural, 'loading'
@@ -92,6 +92,7 @@ class Db
       $.get @url(), (data)=>
         @doLoad(data)
         @onAfterLoad() if @onAfterLoad?
+        afterLoad() if afterLoad?
         viewModel.loading false
         viewModel.systemNotification @plural, 'loaded'
     if autoReload
