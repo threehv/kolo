@@ -5,7 +5,7 @@ class ViewModel
     @flashMessage.subscribe (newValue)=>
       if (newValue? && newValue != '')
         setTimeout =>
-          @flashMessage('')
+          @flashMessage ''
         , 10000
       return true
 
@@ -13,17 +13,13 @@ class ViewModel
     @errorMessage.subscribe (newValue)=>
       if (newValue? && newValue != '')
         setTimeout =>
-          @errorMessage('')
+          @errorMessage ''
         , 10000
       return true
 
   systemNotification: (name, value)->
     $('body').attr("data-#{name}", value)
     @loading(/ing$/.test(value))
-
-class ClientViewModel extends ViewModel
-
-class AdminViewModel extends ViewModel
 
 # Construct passing in a name (which is used in notifications) and a URL (eg /api/v1/people.json) that is used to load items (GET) and create them (POST)
 #   Plus an optional pushStateURI; if supplied (for example as /path/to/object) then the pushState is updated to selected().name() with the URI set to /path/to/object/#{selected().id}
@@ -42,24 +38,21 @@ class AdminViewModel extends ViewModel
 #
 # After instantiation you can also set the following hooks: 
 #   db.sortFunction = function(a, b) { ... }
-#   db.onBeforeLoad = function() { ... } 
-#   db.onAfterLoad = function() { ... }
 
 class Db
-  constructor: (@name, url, @pushStateUri)->
+  constructor: (@viewModel, @name, url, @pushStateUri)->
     @url = ko.observable url
+    @createUrl = ko.observable url
     @items = ko.observableArray []
     @selected = ko.observable null
     @plural = "#{@name}s"
     @sortFunction = null
-    @onBeforeLoad = null
-    @onAfterLoad = null
-    @onAfterPost = null
-    @onAfterDelete = null
     @autoLoading = false
+
     @url.subscribe (newValue)=>
       if newValue?
         @load(false)
+
     if @pushStateUri? && history.pushState?
       @selected.subscribe (newValue)=>
         if newValue? and newValue.id?
@@ -86,51 +79,47 @@ class Db
   load: (autoReload = false, afterLoad = null)=>
     return unless @canLoad()
     if !@selected()
-      viewModel.systemNotification @plural, 'loading'
-      viewModel.loading true
-      @onBeforeLoad() if @onBeforeLoad?
+      @viewModel.systemNotification @plural, 'loading'
+      @viewModel.loading true
       $.get @url(), (data)=>
         @doLoad(data)
-        @onAfterLoad() if @onAfterLoad?
-        afterLoad() if afterLoad?
-        viewModel.loading false
-        viewModel.systemNotification @plural, 'loaded'
+        afterLoad(data) if afterLoad?
+        @viewModel.loading false
+        @viewModel.systemNotification @plural, 'loaded'
     if autoReload
       @autoLoading = true
       setTimeout =>
-        @load(true)
+        @load(true, afterLoad)
       , 30000
     return false
 
-  postTo: (url, data, callback)->
-    viewModel.systemNotification @name, 'saving'
-    viewModel.loading true
+  postTo: (url, data, afterPost)->
+    @viewModel.systemNotification @name, 'saving'
+    @viewModel.loading true
     $.ajax
       url: url
       dataType: 'json'
       type: 'POST'
       data: data
       success: (data)=>
-        viewModel.systemNotification @name, 'saved'
-        viewModel.loading false
-        callback(data) if callback?
-        @onAfterPost(data) if @onAfterPost?
+        afterPost(data) if afterPost?
+        @viewModel.loading false
+        @viewModel.systemNotification @name, 'saved'
         @load(false)
-
     return true
 
   add: =>
     itemToAdd = @newItem(null)
     @selected(itemToAdd)
-    viewModel.systemNotification @name, 'new'
+    @viewModel.systemNotification @name, 'new'
     return itemToAdd
 
-  save: (item)=>
-    return unless item.valid()
+  save: (item, afterSave, onError)=>
+    onError() if !item.valid() && onError?
     if item.id?
-      @doUpdate item
+      @doUpdate item, afterSave
     else
-      @doCreate item
+      @doCreate item, afterSave
 
   doLoad: (data)=>
     for itemData in @itemDataFrom(data)
@@ -139,24 +128,25 @@ class Db
     if @sortFunction?
       @items.sort @sortFunction
 
-  doCreate: (item)=>
-    viewModel.systemNotification @name, 'saving'
-    viewModel.loading true
+  doCreate: (item, afterSave)=>
+    @viewModel.systemNotification @name, 'saving'
+    @viewModel.loading true
     $.ajax
-      url: @url()
+      url: @createUrl()
       dataType: 'json'
       type: 'POST'
       data: @toJS(item) 
       success: (data)=>
         @selected null
-        viewModel.systemNotification @name, 'saved'
-        viewModel.loading false
+        afterSave(item) if afterSave?
+        @viewModel.systemNotification @name, 'saved'
+        @viewModel.loading false
         @load()
     return false
 
-  doUpdate: (item)=>
-    viewModel.systemNotification @name, 'saving'
-    viewModel.loading true
+  doUpdate: (item, afterSave)=>
+    @viewModel.systemNotification @name, 'saving'
+    @viewModel.loading true
     $.ajax
       url: @urlFor(item)
       dataType: 'json'
@@ -164,24 +154,25 @@ class Db
       data: @toJS(item)
       success: (data)=>
         @selected null
-        viewModel.systemNotification @name, 'saved'
-        viewModel.loading false
+        afterSave(item) if afterSave?
+        @viewModel.systemNotification @name, 'saved'
+        @viewModel.loading false
         @load()
     return false
 
-  doDestroy: (item)=>
-    viewModel.systemNotification @name, 'deleting'
-    viewModel.loading true
+  doDestroy: (item, afterDelete)=>
+    @viewModel.systemNotification @name, 'deleting'
+    @viewModel.loading true
     $.ajax
       url: @urlFor(item)
       dataType: 'json'
       type: 'DELETE'
       success: (data)=>
-        viewModel.systemNotification @name, 'deleted'
         @selected null
         @items.remove(item)
-        viewModel.loading false
-        @onAfterDelete if @onAfterDelete?
+        afterDelete() if afterDelete?
+        @viewModel.systemNotification @name, 'deleted'
+        @viewModel.loading false
         @load()
     return false
 
@@ -200,10 +191,46 @@ class Db
   doDelete: (client)=>
     null
 
+  flashMessage: (message)=>
+    @viewModel.flashMessage message
+
+  errorMessage: (message)=>
+    @viewModel.errorMessage message
+
+class Model
+  constructor: (@id, @db)->
+    @editing = ko.observable false
+    @deleting = ko.observable false
+
+  updateAttributes: (data)->
+    null
+
+  valid: ->
+    true
+
+  select: ->
+    @db.selected this
+
+  deselect: ->
+    @deleting false
+    @editing false
+    @db.selected null
+
+  edit: ->
+    @select()
+    @editing true
+
+  save: ->
+    return unless @valid()
+    @deselect()
+    @db.save this
+
+  doDestroy: ->
+    @deselect()
+    @db.doDestroy this
 
 window.ViewModel = ViewModel
-window.ClientViewModel = ClientViewModel
-window.AdminViewModel = AdminViewModel
 window.Db = Db
+window.Model = Model
 
 window.viewModel = new ViewModel # this will probably be overridden by other pages later on
