@@ -220,6 +220,13 @@ class Model
     @select()
     @editing true
 
+  startDeleting: ->
+    @edit()
+    @deleting true
+
+  stopDeleting: ->
+    @deleting false
+
   save: ->
     return unless @valid()
     @deselect()
