@@ -36,8 +36,13 @@ class ViewModel
 #
 # It expects models to have an updateAttributes(data) method and a valid method
 #
-# After instantiation you can also set the following hooks: 
+# After instantiation you can also set the following hooks (some of these have callback equivalents): 
 #   db.sortFunction = function(a, b) { ... }
+#   db.onAfterLoad = function(data) { ... }
+#   db.onBeforeLoad = function() { ... }
+#   db.onAfterDelete = function(data) { ... }
+#   db.onAfterSave = function(data) { ... }
+#   db.onAfterPost = function(data) { ... }
 
 class Db
   constructor: (@viewModel, @name, url, @pushStateUri)->
@@ -47,6 +52,11 @@ class Db
     @selected = ko.observable null
     @plural = "#{@name}s"
     @sortFunction = null
+    @onAfterLoad = null
+    @onBeforeLoad = null
+    @onAfterDelete = null
+    @onAfterSave = null
+    @onAfterPost = null
     @autoLoading = false
 
     @url.subscribe (newValue)=>
@@ -81,9 +91,11 @@ class Db
     if !@selected()
       @viewModel.systemNotification @plural, 'loading'
       @viewModel.loading true
+      @onBeforeLoad() if @onBeforeLoad?
       $.get @url(), (data)=>
         @doLoad(data)
         afterLoad(data) if afterLoad?
+        @onAfterLoad(data) if @onAfterLoad?
         @viewModel.loading false
         @viewModel.systemNotification @plural, 'loaded'
     if autoReload
@@ -103,6 +115,7 @@ class Db
       data: data
       success: (data)=>
         afterPost(data) if afterPost?
+        @onAfterPost(data) if @onAfterPost?
         @viewModel.loading false
         @viewModel.systemNotification @name, 'saved'
         @load(false)
@@ -139,6 +152,7 @@ class Db
       success: (data)=>
         @selected null
         afterSave(item) if afterSave?
+        @onAfterSave(item) if @onAfterSave?
         @viewModel.systemNotification @name, 'saved'
         @viewModel.loading false
         @load()
@@ -155,6 +169,7 @@ class Db
       success: (data)=>
         @selected null
         afterSave(item) if afterSave?
+        @onAfterSave(item) if @onAfterSave?
         @viewModel.systemNotification @name, 'saved'
         @viewModel.loading false
         @load()
@@ -171,6 +186,7 @@ class Db
         @selected null
         @items.remove(item)
         afterDelete() if afterDelete?
+        @onAfterDelete(item) if @onAfterDelete?
         @viewModel.systemNotification @name, 'deleted'
         @viewModel.loading false
         @load()
