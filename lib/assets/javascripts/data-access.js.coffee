@@ -21,6 +21,12 @@ class ViewModel
     $('body').attr("data-#{name}", value)
     @loading(/ing$/.test(value))
 
+  flashPanel: (elementId)->
+    $(elementId).fadeIn()
+    setTimeout =>
+      $(elementId).fadeOut()
+    , 10000
+
 # Construct passing in a name (which is used in notifications) and a URL (eg /api/v1/people.json) that is used to load items (GET) and create them (POST)
 #   Plus an optional pushStateURI; if supplied (for example as /path/to/object) then the pushState is updated to selected().name() with the URI set to /path/to/object/#{selected().id}
 #
