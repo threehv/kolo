@@ -224,6 +224,15 @@ class Model
     @editing = ko.observable false
     @deleting = ko.observable false
 
+  viewModel: =>
+    @db.viewModel
+
+  elementId: =>
+    "#{@db.name}-#{@id}"
+
+  elementSelector: =>
+    "##{@elementId()}"
+
   updateAttributes: (data)->
     null
 
