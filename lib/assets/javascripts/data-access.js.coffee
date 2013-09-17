@@ -64,6 +64,7 @@ class Db
     @onAfterSave = null
     @onAfterPost = null
     @autoLoading = false
+    @loading = false
 
     @url.subscribe (newValue)=>
       if newValue?
@@ -156,6 +157,7 @@ class Db
       type: 'POST'
       data: @toJS(item) 
       success: (data)=>
+        item.id = data.id if data.id?
         @selected null
         afterSave(item) if afterSave?
         @onAfterSave(item) if @onAfterSave?
