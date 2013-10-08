@@ -172,3 +172,24 @@ ko.bindingHandlers.fileupload =
       xhr.open 'POST', url
       xhr.send formData
     return true
+
+ko.bindingHandlers.wysiwyg = 
+  init: (element, valueAccessor, allBindingsAccessor)->
+    value = ko.utils.unwrapObservable valueAccessor()
+    $(element).wysiwyg()
+
+    $(element).bind 'blur keyup paste copy cut mouseup', =>
+      $(element).attr('data-edit-in-progress', 'true')
+      observable = valueAccessor()
+      newValue = $(element).html()
+      observable newValue
+      $(element).attr('data-edit-in-progress', '')
+
+    ko.utils.domNodeDisposal.addDisposeCallback element, =>
+      $(element).wysiwyg('destroy')
+
+  update: (element, valueAccessor)->
+    return if $(element).attr('data-edit-in-progress') == 'true'
+    value = ko.utils.unwrapObservable valueAccessor()
+    $(element).html value
+    ko.bindingHandlers.value.update element, valueAccessor
