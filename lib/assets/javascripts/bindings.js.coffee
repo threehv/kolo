@@ -159,18 +159,29 @@ ko.bindingHandlers.fileupload =
     url = ko.utils.unwrapObservable options.url
 
     return false unless (property && url && parameter)
-    element.addEventListener 'drop', (event)=>
-      event.stopPropagation()
-      event.preventDefault()
-      files = event.dataTransfer.files
-      return unless files.length > 0
+
+    uploadFile = (file)=>
       formData = new FormData
-      formData.append parameter, files[0]
+      formData.append parameter, file
       xhr = new XMLHttpRequest
       xhr.addEventListener 'load', (event)->
         viewModel[onComplete]() if viewModel[onComplete]?
       xhr.open 'POST', url
       xhr.send formData
+
+    element.addEventListener 'drop', (event)=>
+      event.stopPropagation()
+      event.preventDefault()
+      files = event.dataTransfer.files
+      return unless files.length > 0
+      uploadFile files[0]
+
+    element.addEventListener 'change', (event)=>
+      event.stopPropagation()
+      event.preventDefault()
+      file = event.target.files[0]
+      uploadFile file
+
     return true
 
 ko.bindingHandlers.wysiwyg = 
