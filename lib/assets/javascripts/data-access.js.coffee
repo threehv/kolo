@@ -105,11 +105,11 @@ class Db
         @onAfterLoad(data) if @onAfterLoad?
         @viewModel.loading false
         @viewModel.systemNotification @plural, 'loaded'
-    #if autoReload
-    #  @autoLoading = true
-    #  setTimeout =>
-    #    @load(true, afterLoad)
-    #  , 30000
+    if autoReload
+      @autoLoading = true
+      setTimeout =>
+        @load(true, afterLoad)
+      , 30000
     return false
 
   postTo: (url, data, afterPost)->
