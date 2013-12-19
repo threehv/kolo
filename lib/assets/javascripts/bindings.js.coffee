@@ -192,7 +192,7 @@ ko.bindingHandlers.wysiwyg =
     $(element).bind 'blur keyup paste copy cut mouseup', =>
       $(element).attr('data-edit-in-progress', 'true')
       observable = valueAccessor()
-      newValue = $(element).html()
+      newValue = $(element).cleanHtml()
       observable newValue
       $(element).attr('data-edit-in-progress', '')
 
