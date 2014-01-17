@@ -144,7 +144,9 @@ class Db
   doLoad: (data)=>
     for itemData in @itemDataFrom(data)
       item = @findOrCreate itemData.id
+      item.updating true
       item.updateAttributes itemData
+      item.updating false
     if @sortFunction?
       @items.sort @sortFunction
 
@@ -225,6 +227,7 @@ class Model
   constructor: (@id, @db)->
     @editing = ko.observable false
     @deleting = ko.observable false
+    @updating = ko.observable false
 
   viewModel: =>
     @db.viewModel
