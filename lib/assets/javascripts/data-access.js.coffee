@@ -144,9 +144,9 @@ class Db
   doLoad: (data)=>
     for itemData in @itemDataFrom(data)
       item = @findOrCreate itemData.id
-      item.updating true
+      item.updating true if item.updating?
       item.updateAttributes itemData
-      item.updating false
+      item.updating false if item.updating?
     if @sortFunction?
       @items.sort @sortFunction
 
