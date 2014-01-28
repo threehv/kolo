@@ -56,6 +56,9 @@ class Db
     @createUrl = ko.observable url
     @items = ko.observableArray []
     @selected = ko.observable null
+    @selected.subscribe (newValue)=>
+      return unless @selected()?
+      @selected().hasBeenSelected()
     @plural = "#{@name}s"
     @sortFunction = null
     @onAfterLoad = null
@@ -251,6 +254,9 @@ class Model
     @deleting false
     @editing false
     @db.selected null
+
+  hasBeenSelected: ->
+    # override me
 
   edit: ->
     @select()
