@@ -58,7 +58,7 @@ class Db
     @selected = ko.observable null
     @selected.subscribe (newValue)=>
       return unless @selected()?
-      @selected().hasBeenSelected()
+      @selected().hasBeenSelected() if @selected().hasBeenSelected
     @plural = "#{@name}s"
     @sortFunction = null
     @onAfterLoad = null
@@ -231,6 +231,8 @@ class Model
     @editing = ko.observable false
     @deleting = ko.observable false
     @updating = ko.observable false
+    @selected = ko.computed =>
+      @db.selected() == this
 
   viewModel: =>
     @db.viewModel

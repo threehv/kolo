@@ -7,6 +7,7 @@ ko.bindingHandlers.appearif =
     duration = allBindingsAccessor().duration || 400
     if appear
       $(element).fadeIn(duration)
+      $(element).focus()
     else
       $(element).fadeOut(duration)
 
@@ -19,6 +20,7 @@ ko.bindingHandlers.appearifnot =
     duration = allBindingsAccessor().duration || 400
     if !appear
       $(element).fadeIn(duration)
+      $(element).focus()
     else
       $(element).fadeOut(duration)
 
@@ -31,6 +33,7 @@ ko.bindingHandlers.slidedownif =
     duration = allBindingsAccessor().duration || 1000
     if appear
       $(element).slideDown(duration)
+      $(element).focus()
     else
       $(element).slideUp(duration)
 
@@ -43,6 +46,7 @@ ko.bindingHandlers.slidedownifnot =
     duration = allBindingsAccessor().duration || 1000
     if !appear
       $(element).slideDown(duration)
+      $(element).focus()
     else
       $(element).slideUp(duration)
 
@@ -54,6 +58,7 @@ ko.bindingHandlers.slideleftif =
       $(element).transition({ x: '10000px' }, 1)
     else
       $(element).show()
+      $(element).focus()
 
   update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext)->
     appear = ko.utils.unwrapObservable valueAccessor()
@@ -74,6 +79,7 @@ ko.bindingHandlers.slideleftifnot =
       $(element).transition({ x: '10000px' }, 1)
     else
       $(element).show()
+      $(element).focus()
 
   update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext)->
     appear = ko.utils.unwrapObservable valueAccessor()
@@ -94,6 +100,7 @@ ko.bindingHandlers.sliderightif =
       $(element).transition({ x: '-10000px' }, 1)
     else
       $(element).show()
+      $(element).focus()
 
   update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext)->
     appear = ko.utils.unwrapObservable valueAccessor()
@@ -114,6 +121,7 @@ ko.bindingHandlers.sliderightifnot =
       $(element).transition({ x: '-10000px' }, 1)
     else
       $(element).show()
+      $(element).focus()
 
   update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext)->
     appear = ko.utils.unwrapObservable valueAccessor()
