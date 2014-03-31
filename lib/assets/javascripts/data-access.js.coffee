@@ -285,3 +285,4 @@ window.Db = Db
 window.Model = Model
 
 window.viewModel = new ViewModel # this will probably be overridden by other pages later on
+

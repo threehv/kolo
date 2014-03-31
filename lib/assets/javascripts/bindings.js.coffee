@@ -163,12 +163,14 @@ ko.bindingHandlers.fileupload =
     options = ko.utils.unwrapObservable valueAccessor()
     property = ko.utils.unwrapObservable options.property
     parameter = ko.utils.unwrapObservable options.parameter
+    onStartUpload = ko.utils.unwrapObservable options.onStartUpload
     onComplete = ko.utils.unwrapObservable options.onComplete
     url = ko.utils.unwrapObservable options.url
 
     return false unless (property && url && parameter)
 
     uploadFile = (file)=>
+      viewModel[onStartUpload]() if viewModel[onStartUpload]?
       formData = new FormData
       formData.append parameter, file
       xhr = new XMLHttpRequest
@@ -212,3 +214,4 @@ ko.bindingHandlers.wysiwyg =
     value = ko.utils.unwrapObservable valueAccessor()
     $(element).html value
     ko.bindingHandlers.value.update element, valueAccessor
+
