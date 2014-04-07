@@ -98,7 +98,7 @@ class Db
 
   load: (autoReload = false, afterLoad = null)=>
     return unless @canLoad()
-    if !@selected()
+    if !autoReload || !@selected()
       @viewModel.systemNotification @plural, 'loading'
       @viewModel.loading true
       @onBeforeLoad() if @onBeforeLoad?

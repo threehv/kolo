@@ -150,7 +150,7 @@
       if (!this.canLoad()) {
         return;
       }
-      if (!this.selected()) {
+      if (!autoReload || !this.selected()) {
         this.viewModel.systemNotification(this.plural, 'loading');
         this.viewModel.loading(true);
         if (this.onBeforeLoad != null) {
