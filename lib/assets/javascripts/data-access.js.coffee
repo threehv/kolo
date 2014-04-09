@@ -196,6 +196,7 @@ class Db
       dataType: 'json'
       type: 'DELETE'
       success: (data)=>
+        item.id = null
         @selected null
         @items.remove(item)
         afterDelete() if afterDelete?

@@ -307,6 +307,7 @@
         dataType: 'json',
         type: 'DELETE',
         success: function(data) {
+          item.id = null;
           _this.selected(null);
           _this.items.remove(item);
           if (afterDelete != null) {
