@@ -416,17 +416,19 @@
     };
 
     Model.prototype.initDateControls = function() {
-      return setTimeout(function() {
-        if (!this.requiresDatePicker()) {
-          return;
-        }
-        $('input.datepicker').datepicker({
-          format: 'yyyy-mm-dd'
-        });
-        return $('input.datepicker').on('changeDate', function(evt) {
-          return $(this).trigger('change');
-        });
-      }, 100);
+      return setTimeout((function(_this) {
+        return function() {
+          if (!_this.requiresDatePicker()) {
+            return;
+          }
+          $('input.datepicker').datepicker({
+            format: 'yyyy-mm-dd'
+          });
+          return $('input.datepicker').on('changeDate', function(evt) {
+            return $(this).trigger('change');
+          });
+        };
+      })(this), 100);
     };
 
     Model.prototype.requiresDatePicker = function() {

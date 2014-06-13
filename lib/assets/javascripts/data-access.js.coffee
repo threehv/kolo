@@ -267,7 +267,7 @@ class Model
     @editing true
 
   initDateControls: ->
-    setTimeout ->
+    setTimeout =>
       return unless @requiresDatePicker()
       $('input.datepicker').datepicker(format: 'yyyy-mm-dd')
       $('input.datepicker').on 'changeDate', (evt)->
