@@ -252,6 +252,7 @@ class Model
 
   select: ->
     @db.selected this
+    @initDateControls()
 
   deselect: ->
     @deleting false
@@ -264,6 +265,19 @@ class Model
   edit: ->
     @select()
     @editing true
+
+  initDateControls: ->
+    setTimeout ->
+      return unless @requiresDatePicker()
+      $('input.datepicker').datepicker(format: 'yyyy-mm-dd')
+      $('input.datepicker').on 'changeDate', (evt)->
+        $(this).trigger 'change'
+    , 100 
+
+  requiresDatePicker: ->
+    i = document.createElement 'input'
+    i.setAttribute 'type', 'date'
+    return i.type != 'date'
 
   startDeleting: ->
     @edit()
