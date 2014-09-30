@@ -266,6 +266,10 @@ class Model
     @select()
     @editing true
 
+  stopEditing: ->
+    @editing false
+    @deselect()
+
   initDateControls: ->
     setTimeout =>
       return unless @requiresDatePicker()

@@ -415,6 +415,11 @@
       return this.editing(true);
     };
 
+    Model.prototype.stopEditing = function() {
+      this.editing(false);
+      return this.deselect();
+    };
+
     Model.prototype.initDateControls = function() {
       return setTimeout((function(_this) {
         return function() {
