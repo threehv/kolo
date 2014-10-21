@@ -215,3 +215,24 @@ ko.bindingHandlers.wysiwyg =
     $(element).html value
     ko.bindingHandlers.value.update element, valueAccessor
 
+ko.bindingHandlers.richtext =
+  init: (element, valueAccessor, allBindingsAccessor)->
+    value = ko.utils.unwrapObservable valueAccessor()
+    $(element).wysihtml5
+	    'events':
+	      'blur': ->
+	        $(element).attr 'data-edit-in-progress', 'true'
+	        observable = valueAccessor()
+	        newValue = $(element).val()
+	        observable newValue
+	        $(element).attr 'data-edit-in-progress', ''
+	        
+    ko.utils.domNodeDisposal.addDisposeCallback element, =>
+      $(element).wysihtml5('destroy')
+
+  update: (element, valueAccessor)->
+    return if $(element).attr('data-edit-in-progress') == 'true'
+    value = ko.utils.unwrapObservable valueAccessor()
+    $(element).data('wysihtml5').editor.setValue value
+    ko.bindingHandlers.value.update element, valueAccessor
+
