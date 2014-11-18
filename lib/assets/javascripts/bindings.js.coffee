@@ -174,10 +174,16 @@ ko.bindingHandlers.fileupload =
       formData = new FormData
       formData.append parameter, file
       xhr = new XMLHttpRequest
-      xhr.addEventListener 'load', (event)->
-        viewModel[onComplete]() if viewModel[onComplete]?
+      if xhr.addEventListener?
+        xhr.addEventListener 'load', (event)->
+          viewModel[onComplete]() if viewModel[onComplete]?
+      else
+        xhr.attachEvent 'load', (event)->
+          viewModel[onComplete]() if viewModel[onComplete]?
       xhr.open 'POST', url
       xhr.send formData
+
+    element.addEventListener = element.attachEvent unless element.addEventListener?
 
     element.addEventListener 'drop', (event)=>
       event.stopPropagation()

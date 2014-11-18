@@ -269,15 +269,26 @@
           formData = new FormData;
           formData.append(parameter, file);
           xhr = new XMLHttpRequest;
-          xhr.addEventListener('load', function(event) {
-            if (viewModel[onComplete] != null) {
-              return viewModel[onComplete]();
-            }
-          });
+          if (xhr.addEventListener != null) {
+            xhr.addEventListener('load', function(event) {
+              if (viewModel[onComplete] != null) {
+                return viewModel[onComplete]();
+              }
+            });
+          } else {
+            xhr.attachEvent('load', function(event) {
+              if (viewModel[onComplete] != null) {
+                return viewModel[onComplete]();
+              }
+            });
+          }
           xhr.open('POST', url);
           return xhr.send(formData);
         };
       })(this);
+      if (element.addEventListener == null) {
+        element.addEventListener = element.attachEvent;
+      }
       element.addEventListener('drop', (function(_this) {
         return function(event) {
           var files;
