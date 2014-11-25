@@ -346,6 +346,50 @@
     }
   };
 
+  ko.bindingHandlers.date = {
+    init: function(element, valueAccessor, allBindingsAccessor) {
+      var options;
+      options = allBindingsAccessor().datepickerOptions || {};
+      options.dateFormat || (options.dateFormat = 'yy-mm-dd');
+      $(element).datepicker(options);
+      $(element).on('change', function(evt) {
+        var observable;
+        observable = valueAccessor();
+        return observable($(element).datepicker('getDate'));
+      });
+      return ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+        return $(element).datepicker('destroy');
+      });
+    },
+    update: function(element, valueAccessor) {
+      var parsed, value;
+      value = ko.utils.unwrapObservable(valueAccessor());
+      parsed = $.datepicker.parseDate('yy-mm-dd', value);
+      return $(element).datepicker('setDate', parsed);
+    }
+  };
+
+  ko.bindingHandlers.slider = {
+    init: function(element, valueAccessor, allBindingsAccessor) {
+      var options;
+      options = allBindingsAccessor().sliderOptions || {};
+      $(element).slider(options);
+      $(element).on('change', function(evt) {
+        var observable;
+        observable = valueAccessor();
+        return observable($(element).slider('value'));
+      });
+      return ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+        return $(element).slider('destroy');
+      });
+    },
+    update: function(element, valueAccessor) {
+      var value;
+      value = ko.utils.unwrapObservable(valueAccessor());
+      return $(element).slider('value', value);
+    }
+  };
+
   ko.bindingHandlers.richtext = {
     init: function(element, valueAccessor, allBindingsAccessor) {
       var value;
