@@ -221,6 +221,24 @@ ko.bindingHandlers.wysiwyg =
     ko.bindingHandlers.value.update element, valueAccessor
     $(element).attr('data-edit-in-progress', 'false')
 
+ko.bindingHandlers.date = 
+  init: (element, valueAccessor, allBindingsAccessor)->
+    options = allBindingsAccessor().datepickerOptions || {}
+    options.dateFormat ||= 'yy-mm-dd'
+
+    $(element).datepicker(options)
+    $(element).on 'change', (evt)->
+      observable = valueAccessor()
+      observable $(element).datepicker('getDate')
+
+    ko.utils.domNodeDisposal.addDisposeCallback element, ->
+      $(element).datepicker('destroy')
+
+  update: (element, valueAccessor)->
+    value = ko.utils.unwrapObservable(valueAccessor())
+    parsed = $.datepicker.parseDate 'yy-mm-dd', value
+    $(element).datepicker('setDate', parsed)
+
 ko.bindingHandlers.richtext =
   init: (element, valueAccessor, allBindingsAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()

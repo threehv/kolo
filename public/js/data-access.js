@@ -399,7 +399,6 @@
 
     Model.prototype.select = function() {
       this.db.selected(this);
-      return this.initDateControls();
     };
 
     Model.prototype.deselect = function() {
