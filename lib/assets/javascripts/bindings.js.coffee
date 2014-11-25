@@ -243,16 +243,18 @@ ko.bindingHandlers.slider =
   init: (element, valueAccessor, allBindingsAccessor)->
     options = allBindingsAccessor().sliderOptions || {}
 
-    $(element).slider(options)
-    $(element).on 'change', (evt)->
+    options.change = (evt, ui)=>
       observable = valueAccessor()
-      observable $(element).slider('value')
+      observable ui.value
+
+    $(element).slider(options)
 
     ko.utils.domNodeDisposal.addDisposeCallback element, ->
       $(element).slider('destroy')
 
   update: (element, valueAccessor)->
     value = ko.utils.unwrapObservable(valueAccessor())
+    value = 0 if isNaN(value)
     $(element).slider('value', value)
 
 ko.bindingHandlers.richtext =
