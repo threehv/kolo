@@ -239,6 +239,22 @@ ko.bindingHandlers.date =
     parsed = $.datepicker.parseDate 'yy-mm-dd', value
     $(element).datepicker('setDate', parsed)
 
+ko.bindingHandlers.slider = 
+  init: (element, valueAccessor, allBindingsAccessor)->
+    options = allBindingsAccessor().sliderOptions || {}
+
+    $(element).slider(options)
+    $(element).on 'change', (evt)->
+      observable = valueAccessor()
+      observable $(element).slider('value')
+
+    ko.utils.domNodeDisposal.addDisposeCallback element, ->
+      $(element).slider('destroy')
+
+  update: (element, valueAccessor)->
+    value = ko.utils.unwrapObservable(valueAccessor())
+    $(element).slider('value', value)
+
 ko.bindingHandlers.richtext =
   init: (element, valueAccessor, allBindingsAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()
