@@ -203,23 +203,24 @@ ko.bindingHandlers.fileupload =
 ko.bindingHandlers.wysiwyg = 
   init: (element, valueAccessor, allBindingsAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()
-    $(element).wysiwyg()
+    $(element).attr('id', "ckeditor-#{Math.floor((Math.random() * 100000) + 10000)}") unless $(element).attr('id')?
+    editor = CKEDITOR.replace(element)
+    document.recalc() if document.recalc?
 
-    $(element).bind 'blur keyup paste copy cut mouseup', =>
-      $(element).attr('data-edit-in-progress', 'true')
+    editor.on 'change', (evt)->
+      $(element).attr 'data-edit-in-progress', 'true'
       observable = valueAccessor()
-      newValue = $(element).cleanHtml()
-      observable newValue
-      $(element).attr('data-edit-in-progress', '')
-
-    ko.utils.domNodeDisposal.addDisposeCallback element, =>
-      $(element).wysiwyg('destroy')
+      observable(evt.editor.getData())
+      $(element).attr 'data-edit-in-progress', 'false'
 
   update: (element, valueAccessor)->
     return if $(element).attr('data-edit-in-progress') == 'true'
+    id = $(element).attr('id')
+    console.log id
     value = ko.utils.unwrapObservable valueAccessor()
-    $(element).html value
+    CKEDITOR.instances[id].setData value
     ko.bindingHandlers.value.update element, valueAccessor
+    $(element).attr('data-edit-in-progress', 'false')
 
 ko.bindingHandlers.richtext =
   init: (element, valueAccessor, allBindingsAccessor)->
