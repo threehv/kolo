@@ -216,7 +216,6 @@ ko.bindingHandlers.wysiwyg =
   update: (element, valueAccessor)->
     return if $(element).attr('data-edit-in-progress') == 'true'
     id = $(element).attr('id')
-    console.log id
     value = ko.utils.unwrapObservable valueAccessor()
     CKEDITOR.instances[id].setData value
     ko.bindingHandlers.value.update element, valueAccessor
