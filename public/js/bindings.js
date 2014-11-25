@@ -316,33 +316,33 @@
 
   ko.bindingHandlers.wysiwyg = {
     init: function(element, valueAccessor, allBindingsAccessor) {
-      var value;
+      var editor, value;
       value = ko.utils.unwrapObservable(valueAccessor());
-      $(element).wysiwyg();
-      $(element).bind('blur keyup paste copy cut mouseup', (function(_this) {
-        return function() {
-          var newValue, observable;
-          $(element).attr('data-edit-in-progress', 'true');
-          observable = valueAccessor();
-          newValue = $(element).cleanHtml();
-          observable(newValue);
-          return $(element).attr('data-edit-in-progress', '');
-        };
-      })(this));
-      return ko.utils.domNodeDisposal.addDisposeCallback(element, (function(_this) {
-        return function() {
-          return $(element).wysiwyg('destroy');
-        };
-      })(this));
+      if ($(element).attr('id') == null) {
+        $(element).attr('id', "ckeditor-" + (Math.floor((Math.random() * 100000) + 10000)));
+      }
+      editor = CKEDITOR.replace(element);
+      if (document.recalc != null) {
+        document.recalc();
+      }
+      return editor.on('change', function(evt) {
+        var observable;
+        $(element).attr('data-edit-in-progress', 'true');
+        observable = valueAccessor();
+        observable(evt.editor.getData());
+        return $(element).attr('data-edit-in-progress', 'false');
+      });
     },
     update: function(element, valueAccessor) {
-      var value;
+      var id, value;
       if ($(element).attr('data-edit-in-progress') === 'true') {
         return;
       }
+      id = $(element).attr('id');
       value = ko.utils.unwrapObservable(valueAccessor());
-      $(element).html(value);
-      return ko.bindingHandlers.value.update(element, valueAccessor);
+      CKEDITOR.instances[id].setData(value);
+      ko.bindingHandlers.value.update(element, valueAccessor);
+      return $(element).attr('data-edit-in-progress', 'false');
     }
   };
 
