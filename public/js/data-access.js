@@ -398,7 +398,7 @@
     };
 
     Model.prototype.select = function() {
-      this.db.selected(this);
+      return this.db.selected(this);
     };
 
     Model.prototype.deselect = function() {
@@ -417,22 +417,6 @@
     Model.prototype.stopEditing = function() {
       this.editing(false);
       return this.deselect();
-    };
-
-    Model.prototype.initDateControls = function() {
-      return setTimeout((function(_this) {
-        return function() {
-          if (!_this.requiresDatePicker()) {
-            return;
-          }
-          $('input.datepicker').datepicker({
-            format: 'yyyy-mm-dd'
-          });
-          return $('input.datepicker').on('changeDate', function(evt) {
-            return $(this).trigger('change');
-          });
-        };
-      })(this), 100);
     };
 
     Model.prototype.requiresDatePicker = function() {
