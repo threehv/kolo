@@ -373,12 +373,14 @@
     init: function(element, valueAccessor, allBindingsAccessor) {
       var options;
       options = allBindingsAccessor().sliderOptions || {};
+      options.change = (function(_this) {
+        return function(evt, ui) {
+          var observable;
+          observable = valueAccessor();
+          return observable(ui.value);
+        };
+      })(this);
       $(element).slider(options);
-      $(element).on('change', function(evt) {
-        var observable;
-        observable = valueAccessor();
-        return observable($(element).slider('value'));
-      });
       return ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
         return $(element).slider('destroy');
       });
@@ -386,6 +388,9 @@
     update: function(element, valueAccessor) {
       var value;
       value = ko.utils.unwrapObservable(valueAccessor());
+      if (isNaN(value)) {
+        value = 0;
+      }
       return $(element).slider('value', value);
     }
   };
