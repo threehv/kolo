@@ -236,7 +236,10 @@ ko.bindingHandlers.date =
 
   update: (element, valueAccessor)->
     value = ko.utils.unwrapObservable(valueAccessor())
-    parsed = $.datepicker.parseDate 'yy-mm-dd', value
+    if value?
+      parsed = $.datepicker.parseDate 'yy-mm-dd', value
+    else
+      parsed = null
     $(element).datepicker('setDate', parsed)
 
 ko.bindingHandlers.slider = 
