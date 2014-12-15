@@ -204,7 +204,7 @@ ko.bindingHandlers.wysiwyg =
   init: (element, valueAccessor, allBindingsAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()
     $(element).attr('id', "ckeditor-#{Math.floor((Math.random() * 100000) + 10000)}") unless $(element).attr('id')?
-    editor = CKEDITOR.replace(element)
+    editor = CKEDITOR.replace element, { allowedContent: true }
     document.recalc() if document.recalc?
 
     editor.on 'change', (evt)->

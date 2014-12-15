@@ -321,7 +321,9 @@
       if ($(element).attr('id') == null) {
         $(element).attr('id', "ckeditor-" + (Math.floor((Math.random() * 100000) + 10000)));
       }
-      editor = CKEDITOR.replace(element);
+      editor = CKEDITOR.replace(element, {
+        allowedContent: true
+      });
       if (document.recalc != null) {
         document.recalc();
       }
