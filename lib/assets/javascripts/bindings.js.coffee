@@ -159,7 +159,7 @@ ko.bindingHandlers.swipedown =
       value(event)
 
 ko.bindingHandlers.fileupload = 
-  init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext)->
+  update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext)->
     options = ko.utils.unwrapObservable valueAccessor()
     property = ko.utils.unwrapObservable options.property
     parameter = ko.utils.unwrapObservable options.parameter
