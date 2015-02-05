@@ -80,6 +80,9 @@ class Db
         else
           history.pushState '', '', @pushStateUri
 
+  systemNotification: (name, value)->
+    @viewModel.systemNotification name, value
+
   find: (id)=>
     for item in @items()
       return item if item.id == id
@@ -289,6 +292,9 @@ class Model
   doDestroy: ->
     @deselect()
     @db.doDestroy this
+
+  systemNotification: (name, value)->
+    @db.systemNotification name, value
 
 window.ViewModel = ViewModel
 window.Db = Db
