@@ -366,10 +366,13 @@
     update: function(element, valueAccessor) {
       var parsed, value;
       value = ko.utils.unwrapObservable(valueAccessor());
-      if (value != null) {
-        parsed = $.datepicker.parseDate('yy-mm-dd', value);
-      } else {
-        parsed = null;
+      parsed = null;
+      try {
+        if (value != null) {
+          parsed = $.datepicker.parseDate('yy-mm-dd', value);
+        }
+      } catch (_error) {
+        parsed = value;
       }
       return $(element).datepicker('setDate', parsed);
     }
