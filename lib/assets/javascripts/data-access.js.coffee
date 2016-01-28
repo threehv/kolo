@@ -115,7 +115,7 @@ class Db
       @autoLoading = true
       setTimeout =>
         @load(true, afterLoad)
-      , 30000
+      , 120000
     return false
 
   postTo: (url, data, afterPost)->
