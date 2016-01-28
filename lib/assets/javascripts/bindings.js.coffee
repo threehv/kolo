@@ -207,11 +207,20 @@ ko.bindingHandlers.wysiwyg =
     editor = CKEDITOR.replace element, { allowedContent: true }
     document.recalc() if document.recalc?
 
+    editor.on 'key', (evt)->
+      keyCode = evt.data.keyCode
+      return true if (keyCode == 46 || keyCode == 8 || keyCode == 37 || keyCode == 38 || keyCode == 39 || keyCode == 40) # let BS DEL and arrow keys through no matter what
+      limit = 4096
+      str = evt.editor.getData()
+      return false if str.length >= limit
+      return true
+
     editor.on 'change', (evt)->
       $(element).attr 'data-edit-in-progress', 'true'
       observable = valueAccessor()
       observable(evt.editor.getData())
       $(element).attr 'data-edit-in-progress', 'false'
+
 
   update: (element, valueAccessor)->
     return if $(element).attr('data-edit-in-progress') == 'true'

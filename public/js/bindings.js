@@ -327,6 +327,19 @@
       if (document.recalc != null) {
         document.recalc();
       }
+      editor.on('key', function(evt) {
+        var keyCode, limit, str;
+        keyCode = evt.data.keyCode;
+        if (keyCode === 46 || keyCode === 8 || keyCode === 37 || keyCode === 38 || keyCode === 39 || keyCode === 40) {
+          return true;
+        }
+        limit = 4096;
+        str = evt.editor.getData();
+        if (str.length >= limit) {
+          return false;
+        }
+        return true;
+      });
       return editor.on('change', function(evt) {
         var observable;
         $(element).attr('data-edit-in-progress', 'true');
