@@ -113,6 +113,10 @@
       }
     }
 
+    Db.prototype.systemNotification = function(name, value) {
+      return this.viewModel.systemNotification(name, value);
+    };
+
     Db.prototype.find = function(id) {
       var item, _i, _len, _ref;
       _ref = this.items();
@@ -178,7 +182,7 @@
           return function() {
             return _this.load(true, afterLoad);
           };
-        })(this), 30000);
+        })(this), 120000);
       }
       return false;
     };
@@ -446,6 +450,10 @@
     Model.prototype.doDestroy = function() {
       this.deselect();
       return this.db.doDestroy(this);
+    };
+
+    Model.prototype.systemNotification = function(name, value) {
+      return this.db.systemNotification(name, value);
     };
 
     return Model;
