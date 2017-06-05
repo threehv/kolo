@@ -1,4 +1,4 @@
-ko.bindingHandlers.appearif = 
+ko.bindingHandlers.appearif =
   init: (element, valueAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()
     $(element).toggle(value)
@@ -11,7 +11,7 @@ ko.bindingHandlers.appearif =
     else
       $(element).fadeOut(duration)
 
-ko.bindingHandlers.appearifnot = 
+ko.bindingHandlers.appearifnot =
   init: (element, valueAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()
     $(element).toggle(!value)
@@ -24,7 +24,7 @@ ko.bindingHandlers.appearifnot =
     else
       $(element).fadeOut(duration)
 
-ko.bindingHandlers.slidedownif = 
+ko.bindingHandlers.slidedownif =
   init: (element, valueAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()
     $(element).toggle(value)
@@ -37,7 +37,7 @@ ko.bindingHandlers.slidedownif =
     else
       $(element).slideUp(duration)
 
-ko.bindingHandlers.slidedownifnot = 
+ko.bindingHandlers.slidedownifnot =
   init: (element, valueAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()
     $(element).toggle(!value)
@@ -50,7 +50,7 @@ ko.bindingHandlers.slidedownifnot =
     else
       $(element).slideUp(duration)
 
-ko.bindingHandlers.slideleftif = 
+ko.bindingHandlers.slideleftif =
   init: (element, valueAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()
     if !value
@@ -71,7 +71,7 @@ ko.bindingHandlers.slideleftif =
         $(element).hide()
       )
 
-ko.bindingHandlers.slideleftifnot = 
+ko.bindingHandlers.slideleftifnot =
   init: (element, valueAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()
     if value
@@ -92,7 +92,7 @@ ko.bindingHandlers.slideleftifnot =
         $(element).hide()
       )
 
-ko.bindingHandlers.sliderightif = 
+ko.bindingHandlers.sliderightif =
   init: (element, valueAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()
     if !value
@@ -113,7 +113,7 @@ ko.bindingHandlers.sliderightif =
         $(element).hide()
       )
 
-ko.bindingHandlers.sliderightifnot = 
+ko.bindingHandlers.sliderightifnot =
   init: (element, valueAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()
     if value
@@ -134,31 +134,31 @@ ko.bindingHandlers.sliderightifnot =
         $(element).hide()
       )
 
-ko.bindingHandlers.swipeleft = 
+ko.bindingHandlers.swipeleft =
   init: (element, valueAccessor)->
-    Hammer(element).on 'swipeleft', (event)-> 
+    Hammer(element).on 'swipeleft', (event)->
       value = valueAccessor()
       value(event)
 
-ko.bindingHandlers.swiperight = 
+ko.bindingHandlers.swiperight =
   init: (element, valueAccessor)->
-    Hammer(element).on 'swiperight', (event)-> 
+    Hammer(element).on 'swiperight', (event)->
       value = valueAccessor()
       value(event)
 
-ko.bindingHandlers.swipeup = 
+ko.bindingHandlers.swipeup =
   init: (element, valueAccessor)->
-    Hammer(element).on 'swipeup', (event)-> 
+    Hammer(element).on 'swipeup', (event)->
       value = valueAccessor()
       value(event)
 
-ko.bindingHandlers.swipedown = 
+ko.bindingHandlers.swipedown =
   init: (element, valueAccessor)->
-    Hammer(element).on 'swipedown', (event)-> 
+    Hammer(element).on 'swipedown', (event)->
       value = valueAccessor()
       value(event)
 
-ko.bindingHandlers.fileupload = 
+ko.bindingHandlers.fileupload =
   update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext)->
     options = ko.utils.unwrapObservable valueAccessor()
     property = ko.utils.unwrapObservable options.property
@@ -200,7 +200,7 @@ ko.bindingHandlers.fileupload =
 
     return true
 
-ko.bindingHandlers.wysiwyg = 
+ko.bindingHandlers.wysiwyg =
   init: (element, valueAccessor, allBindingsAccessor)->
     value = ko.utils.unwrapObservable valueAccessor()
     $(element).attr('id', "ckeditor-#{Math.floor((Math.random() * 100000) + 10000)}") unless $(element).attr('id')?
@@ -210,7 +210,7 @@ ko.bindingHandlers.wysiwyg =
     editor.on 'key', (evt)->
       keyCode = evt.data.keyCode
       return true if (keyCode == 46 || keyCode == 8 || keyCode == 37 || keyCode == 38 || keyCode == 39 || keyCode == 40) # let BS DEL and arrow keys through no matter what
-      limit = 4096
+      limit = 8192
       str = evt.editor.getData()
       return false if str.length >= limit
       return true
@@ -230,7 +230,7 @@ ko.bindingHandlers.wysiwyg =
     ko.bindingHandlers.value.update element, valueAccessor
     $(element).attr('data-edit-in-progress', 'false')
 
-ko.bindingHandlers.date = 
+ko.bindingHandlers.date =
   init: (element, valueAccessor, allBindingsAccessor)->
     options = allBindingsAccessor().datepickerOptions || {}
     options.dateFormat ||= 'yy-mm-dd'
@@ -252,7 +252,7 @@ ko.bindingHandlers.date =
       parsed = value
     $(element).datepicker('setDate', parsed)
 
-ko.bindingHandlers.slider = 
+ko.bindingHandlers.slider =
   init: (element, valueAccessor, allBindingsAccessor)->
     options = allBindingsAccessor().sliderOptions || {}
 
@@ -281,7 +281,7 @@ ko.bindingHandlers.richtext =
 	        newValue = $(element).val()
 	        observable newValue
 	        $(element).attr 'data-edit-in-progress', ''
-	        
+
     ko.utils.domNodeDisposal.addDisposeCallback element, =>
       $(element).wysihtml5('destroy')
 
@@ -290,4 +290,3 @@ ko.bindingHandlers.richtext =
     value = ko.utils.unwrapObservable valueAccessor()
     $(element).data('wysihtml5').editor.setValue value
     ko.bindingHandlers.value.update element, valueAccessor
-
